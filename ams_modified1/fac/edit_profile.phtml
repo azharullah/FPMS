@@ -1,0 +1,122 @@
+ <div><br><br><span class=navigation_link1>You are here: </sapn><a href=facindex.php?page=fachome class=navigation_link> Home&nbsp&nbsp;&raquo; </a>  Edit Profile  </div>
+ 
+ <div class="center">
+<div class="course_options">
+<div class="errors">
+    <?php require 'dbconnect.php';
+	$profile    = $_SESSION['id'];
+	
+	$query1 = 
+                "   
+                SELECT name,phone_no,email_id   
+                FROM registered
+                WHERE id_no = '$profile';
+                ";
+	$result1 	= mysql_query($query1);
+	$row    	= mysql_fetch_array($result1);
+	
+	
+if(array_key_exists('save', $_POST))
+{
+    $profile    = $_SESSION['id']; 
+	$name 		= $_POST['name'];
+    $phone      = $_POST['phone'];
+    $email      = $_POST['email'];
+	$count=0;	
+	
+	if ( $name != "")
+	{
+		$query_cd = 
+                "   
+                UPDATE registered   
+                SET name='$name'
+                WHERE id_no = '$profile';
+                ";
+		$result_cd = mysql_query($query_cd);
+		if (!$result_cd)
+		{
+			$count++;
+			echo "Error in updating name";
+		}
+	}
+	if ( $phone != "")
+	{
+		$query_cd = 
+					"   
+					UPDATE registered   
+					SET phone_no = '$phone'
+					WHERE id_no ='$profile';
+					";
+		$result_cd = mysql_query($query_cd);
+		if (!$result_cd)
+		{
+			echo "Error in updating phone number";
+			$count++;
+			
+		}
+	}
+	if ( $email != "")
+	{
+		$query_cd = 
+                "   
+                UPDATE registered   
+                SET email_id = '$email'
+                WHERE id_no  = '$profile';
+                ";
+		$result_cd = mysql_query($query_cd);
+		if (!$result_cd)
+		{
+			echo "Error in updating email";
+			$count++;
+			
+		}
+	}
+    
+	if ($count == 0)
+	{
+		echo "Successfully changed the profile for user ".$name."<br>";
+	}
+	$query1 = 
+                "   
+                SELECT name,phone_no,email_id   
+                FROM registered
+                WHERE id_no = '$profile';
+                ";
+	$result1 	= mysql_query($query1);
+	$row    	= mysql_fetch_array($result1);
+	
+}    
+
+	
+if(array_key_exists('cancel', $_POST))
+{
+
+}
+        ?>
+
+</div>
+<form name="Change" action="#" method="POST" >
+    <fieldset><br>
+		
+        <div class="field">
+            <label>Name</label>
+            <input type="text" name="name" value="<?php echo $row['name'];?>" />
+        </div>
+		<br>
+		<div class="field">
+            <label>Phone number</label>
+            <input type="text" name="phone" value="<?php echo $row['phone_no'];?>" />
+        </div>
+        <div class="field">
+            <label>Email-id</label>
+            <input type="text" name="email" value="<?php echo $row['email_id'];?>" />
+        </div>
+        <br><br>
+        <div class="field">
+        <label><input type="submit" name="save" class="Submit" /></label>
+        <label><input type="submit" name="cancel" value="Cancel" class="submit" /></label>
+        </div>
+    </fieldset>
+</form>
+
+</div></div>

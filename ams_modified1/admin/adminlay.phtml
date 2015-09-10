@@ -1,0 +1,61 @@
+<?php
+if (!isset($_SESSION['started']) || ($_SESSION['loginas'] != 'Admin')) {
+    header('Location:index.php');
+}
+if (isset($_GET['logout']) && $_GET['logout'] = 1) {
+    unset($_SESSION['started']);
+    header('Location:index.php');
+}
+?>
+
+<html>
+    <head>
+        <title>Attendance Management System</title>
+        <link type="text/css" href="css/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <link href="css/layout.css" rel="stylesheet" type="text/css" />
+        
+        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>
+        <link href="css/timePicker.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="js/jquery.timePicker.js"></script>
+		<script type="text/javascript" src="js/javascript.js"></script>
+    </head>
+ 
+	<body id="page">
+        
+        
+		<div id="header">
+            <br> <br> <br><br><center><center>Attendance Management System</center>       
+		</div>
+		
+        <div id="content">
+           
+			
+			<br>
+						
+			<div class="wrapper">
+                <div class="col-1">
+                    <br><br>
+                    <div class="box">
+
+                        <a href="adminindex.php?page=adminhome"> <img src="img/icons/home.png"  class="icons" >Home </a><br>
+						<a href="adminindex.php?page=manage_course"> <img src="img/icons/courses.png"  class="icons" >Manage courses </a><br>
+						<a href="adminindex.php?page=holidays"> <img src="img/icons/holiday.png"  class="icons1" >Manage holidays </a><br>
+                        <a href="adminindex.php?page=edit_profile"> <img src="img/icons/edit_user.png"  class="icons" >Edit profiles </a><br>
+                        <a href="adminindex.php?page=admin_change_pass"> <img src="img/icons/changepass.png"  class="icons1">Change password </a><br>
+                        <a href="adminindex.php?page=adminhome&logout=1"><img src="img/icons/logoff.png"  class="icons" >Logout </a><br> <br>
+                    </div>
+                </div>
+
+
+                <div class="col-2">
+					<?php
+						require $template;
+					?>
+                </div>
+            </div>
+        </div>
+    </body>
+ </html>

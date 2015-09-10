@@ -1,0 +1,98 @@
+
+<?php
+if (isset($_POST['search']) ) {
+    $_GET['search'] = $_POST['search'];
+} 
+if(isset($_GET['order']))
+{
+    $order=$_GET['order'];
+}
+else
+{
+    $order="default";
+}
+?>
+
+
+<?php
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+$result = mysql_query("select * from course_details where course_id='$a'")
+or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_name'] ;
+
+    echo "<div><br><br><span class=navigation_link1>You are here: </sapn><a href=facindex.php?page=fachome class="."navigation_link> Home&nbsp&nbsp;&raquo; </a> <a href=facindex.php?page=course_sel&id=$a class="."navigation_link> $b&nbsp&nbsp;&raquo;</a> Enroll   </div>";
+}
+?>
+<br><br>
+<form name="search_form" method="POST" action="#" style="padding:0px 250px;">
+    <input type="text" name="search" class="search_box" value="" placeholder="Search a pattern here"/>
+    <input type="submit" value=""  style="background:url(img/icons/search.png) no-repeat; background-size:20px 20px; cursor:pointer; border:none; width:20px; height:20px; "/>
+</form>
+
+
+
+<?php
+
+/* $conn=mysql_connect("localhost","root","");
+mysql_selectdb("mod_fpa"); */
+require_once('dbconnect.php');
+$a = $_GET['search'];
+if ($a == '') {
+    $a = '%';
+}
+//echo $a;
+$b = $_GET['id'];
+
+
+if($order=="id"){
+$result = mysql_query("select * from registered where id_no like '$a' order by id_no") or die(mysql_error());
+}
+
+if($order=="name"){
+    
+$result = mysql_query("select * from registered where id_no like '$a' order by name") or die(mysql_error());
+}
+else
+{
+$result = mysql_query("select * from registered where id_no like '$a'") or die(mysql_error());
+} 
+
+
+echo "<div class=course_options>";
+?>
+
+
+<table border="0px" cellpadding="5">
+<tr>
+    <?php if($order=="id") {echo "<td><b><u>ID</u></b></td>";} else {?>
+    <td><b><a href="facindex.php?page=enroll&search=<?php echo $a;?>&id=<?php echo $b;?>&order=id" style="display: inline;color:Blue">ID</a>&#x25BC;</b></td><?php } ?>
+     <?php if($order=="name") {echo "<td><b><u>Name</u></b></td>";} else {?>
+    <td><b><a href="facindex.php?page=enroll&search=<?php echo $a;?>&id=<?php echo $b;?>&order=name" style="display: inline; color:Blue">Name</a>&#x25BC;</b></td><?php } ?>
+    <td><b><u>S.NO</u></b></td>
+    <td><b><a onclick=enroll_all(); style="color:Blue">Enroll All</a> </b></td>
+    </tr>
+
+<?php
+while ($row = mysql_fetch_array($result)) {
+
+    $c = $row['id_no'];
+
+    $result1 = mysql_query("select * from enrolled_details where id_no='$c' and course_id='$b'") or die(mysql_error());
+    if ($row1 = mysql_fetch_array($result1)) 
+    {
+
+
+    } 
+    else {
+        //echo "<div class='enroll'>" . $row['id_no'] . "   " . $row['name'] . "<a href=facindex.php?page=enroll&search=".$a."&id=".$b."&st_toenroll=" . $row['id_no'] . ">   Enroll </a></div><br>\n";
+echo "<tr><td> ".$row['id_no']."</td><td> ".$row['name'] ."</td><td><input name=sno type='text' value=''></td><td><a onclick=enroll(this); id=".$row['id_no']." name=$b>Enroll </a></td></tr>";
+
+       /* echo "<div class='enroll'>" . $row['id_no'] . "   " . $row['name'] . "<form action=facindex.php?page=enroll&search=".$a."&id=".$b."&st_toenroll=" . $row['id_no']. " method='POST'><input type='text' name='enrl_no' value=''>";
+        echo "<input type='submit' name='sub' value='ENROLL'> </form></div><br>\n";*/
+    }
+
+}
+echo "</table></div>";
+?>

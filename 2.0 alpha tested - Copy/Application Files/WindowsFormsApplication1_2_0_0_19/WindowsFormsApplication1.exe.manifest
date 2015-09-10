@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1">
+  <asmv1:assemblyIdentity name="WindowsFormsApplication1.exe" version="2.0.0.19" publicKeyToken="10632a79b61ba4a0" language="en" processorArchitecture="x86" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="WindowsFormsApplication1" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
+    <commandLine file="WindowsFormsApplication1.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the 
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward 
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MySql.Data.dll" size="348160">
+      <assemblyIdentity name="MySql.Data" version="6.1.6.0" publicKeyToken="C5687FC88969C44D" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>YOKmBlQndIXPNwzyB0tKoA7hmRQ=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MySql.Data.Entity.dll" size="224768">
+      <assemblyIdentity name="MySql.Data.Entity" version="6.1.6.0" publicKeyToken="C5687FC88969C44D" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>AC2aIGG58uWbjOuq8lGfcYZg2xg=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NITGEN.SDK.NBioBSP.dll" size="81920">
+      <assemblyIdentity name="NITGEN.SDK.NBioBSP" version="1.2.3.0" publicKeyToken="96EEE45103D523D1" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>tDTj+bjDKsmS4Sk2raZBQMgpCOA=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Renci.SshNet.dll" size="425984">
+      <assemblyIdentity name="Renci.SshNet" version="2014.4.6.0" publicKeyToken="1CEE9F8BDE3DB106" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>bUnyzTt+muzjWbFuP0cuHMhCXZQ=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="WindowsFormsApplication1.exe" size="323584">
+      <assemblyIdentity name="WindowsFormsApplication1" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <dsig:DigestValue>maIaZLzGPK8osmPJqQxDUS3SRLg=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="NBioBSP.dll" size="3684408">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>b/OgfWzt/x45AiUhLvP+XpvyeKc=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="NBioBSPCOM.dll" size="447488">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>LsAp8S3Qazb4YddWO8/2eJAb8n0=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Resources\settings.png" size="79564">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>VJ01WB0o9dGl+AvxZ6IWkh9+7LY=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="user_pics\default.jpg" size="5634">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>/DOTGdhaqPtwuKzRXmrd6eaWHuY=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="WindowsFormsApplication1.exe.config" size="463">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>+VTy2xmvJschvP68XVFucByYAcM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="WindowsFormsApplication1.pdb" size="132608">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>157bXMwT/vVlUUgZwNT55/c7Q9E=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=EdgeOfTheEarth\Edge Of The Earth" issuerKeyHash="96431aa625c35c9df916252a02fc7f580fc471a3" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>hbs3dBtQupg9gYfhzhIlcYMBmb4=</DigestValue></Reference></SignedInfo><SignatureValue>joUIO4tIdSjRbFeQ+0e7hFssgyH3cbUMwsHupJJ3+bT5eHiok3+DOMBich/rpllZB40Vvo7YqjENaWlR+MsqcO8IRr7cq7oWlv6iW7LnCn1UDgCvpAY6KLW27DDUaJJhNLfWcAhu/pU4u5F1Q/DUKNMBdBqOKj5gaJhzSMr7tUE=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>1ktDDXZRMaiK5I+/jNNj9mCfztod7KpRtsFS78+x0d1O4ZAztplam3wCL6ye4BzBRD5rbUySBZ51uTlKl+dc81eM8EjqH2sE0g8yBG9sqqgpINNB46PJCrYzgSo1QIh7X7enRdGosuNYbXBE5AGhSfOtRZISdBJMKSH84zKx8zs=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="be990183712512cee187813d98ba501b7437bb85" Description="" Url=""><as:assemblyIdentity name="WindowsFormsApplication1.exe" version="2.0.0.19" publicKeyToken="10632a79b61ba4a0" language="en" processorArchitecture="x86" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=EdgeOfTheEarth\Edge Of The Earth</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>SDyCPQ8mNszda7WN5M7jZy39wg4=</DigestValue></Reference></SignedInfo><SignatureValue>EdcgiFfY8B232Aey+ximRuQ/ltdSFLe2/AzrlZPUPmBuIBq3C64ghHKmg66hnVWjnaTv0Zlfzd4FbsAQjMPKrGWnOdpN+Fv5IQJH6YQmJt2+zN61eY5jgS1pRfhqEiF56lq+Ui8MDWQ38e+K9qYGW5tfpr7qV6ZsGwvbA4Mx7Xs=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>1ktDDXZRMaiK5I+/jNNj9mCfztod7KpRtsFS78+x0d1O4ZAztplam3wCL6ye4BzBRD5rbUySBZ51uTlKl+dc81eM8EjqH2sE0g8yBG9sqqgpINNB46PJCrYzgSo1QIh7X7enRdGosuNYbXBE5AGhSfOtRZISdBJMKSH84zKx8zs=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIICGTCCAYKgAwIBAgIQL4CkTfyYRJ1FOenBMN1zqTANBgkqhkiG9w0BAQUFADBLMUkwRwYDVQQDHkAARQBkAGcAZQBPAGYAVABoAGUARQBhAHIAdABoAFwARQBkAGcAZQAgAE8AZgAgAFQAaABlACAARQBhAHIAdABoMB4XDTE0MDEyMTIzMDQxOVoXDTE1MDEyMjA1MDQxOVowSzFJMEcGA1UEAx5AAEUAZABnAGUATwBmAFQAaABlAEUAYQByAHQAaABcAEUAZABnAGUAIABPAGYAIABUAGgAZQAgAEUAYQByAHQAaDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA1ktDDXZRMaiK5I+/jNNj9mCfztod7KpRtsFS78+x0d1O4ZAztplam3wCL6ye4BzBRD5rbUySBZ51uTlKl+dc81eM8EjqH2sE0g8yBG9sqqgpINNB46PJCrYzgSo1QIh7X7enRdGosuNYbXBE5AGhSfOtRZISdBJMKSH84zKx8zsCAwEAATANBgkqhkiG9w0BAQUFAAOBgQBItksxSy3hxBpghEtJA+QOuVLBPRfgW6Z8FEIzmM+nmZrBkUxO0XkF95tJjEXz+IBcsDg9zXMXZEHZnngpTpfRNPgohREu8E6B3eNSRJxQ+UJtuZA8nG/hBrYJ+JpI+qyjjYD3RSzuArnYFesFCVVBy1j4xb5sEi2Lz4ZCyDnjoQ==</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

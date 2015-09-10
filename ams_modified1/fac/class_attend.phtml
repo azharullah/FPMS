@@ -1,0 +1,579 @@
+
+
+<?php
+ob_start();
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+$result = mysql_query("select * from course_details where course_id='$a'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_name'];
+    
+     echo "<div><br><br><span class=navigation_link1>You are here: </sapn><a href=facindex.php?page=fachome class="."navigation_link> Home&nbsp&nbsp;&raquo; </a> <a href=facindex.php?page=course_sel&id=$a class="."navigation_link> $b&nbsp&nbsp;&raquo;</a> Show class attendance   </div>";
+    
+        
+}
+?>
+<div class="center">
+<br><br>
+
+<div class=course_options>
+<div class="disform">
+<form name="classattend" action="#" method="post">
+    <fieldset>
+        <div class="field" >
+            <label>Display Type</label>
+            <select name="type" id="select" onchange="percentage(this , 'per','perc')" 
+            <?php $tempty="abc";
+              if (array_key_exists('save', $_POST) || array_key_exists('export', $_POST)) 
+            		{
+            			$tempty= $_POST["type"];
+            			
+            		} ?>>
+                <option
+                 <?php ob_start();
+              		if ($tempty=="present") echo "selected=selected" ; ?>>Present</option>
+                <option
+                	<?php ob_start();
+              			if ($tempty=="Absent") echo "selected=selected" ; ?>>Absent</option>
+                <option
+                <?php ob_start();
+              		if ($tempty=="Complete") echo "selected=selected" ; ?>>Complete</option>
+				<option
+				<?php ob_start();
+              		if ($tempty=="Compact") echo "selected=selected" ; ?>>Compact</option>
+			</select>
+        </div>
+        
+        <div class="field">
+            <br>
+            <label>From</label>
+            <?php ob_start(); if (array_key_exists('save', $_POST) || array_key_exists('export', $_POST)) {$tempf= $_POST["from"]; echo "<input type=text name=from class=datepicker value=$tempf />" ; } else{?>
+            <input type="text" name="from" class="datepicker" value="" /><?php }?>
+        </div>
+        <br>
+        <div class="field">
+            <label>To</label>
+            <?php ob_start();  if (array_key_exists('save', $_POST) || array_key_exists('export', $_POST)) {$tempt= $_POST["till"]; echo "<input type=text name=till class=datepicker value=$tempt />" ; } else{?>
+            <input type="text" name="till" class="datepicker" value="" /><?php }?>
+
+        </div>
+		<br>
+
+		<div class="field" >
+            <label>Sort By</label>
+            <select name="sort_by" 
+            <?php ob_start(); 
+			$tempty="abc";
+              if (array_key_exists('save', $_POST) || array_key_exists('export', $_POST)) 
+            		{
+            			$tempty= $_POST["sort_by"];
+            			
+            		} ?>>
+                <option value="s_no"
+                 <?php ob_start();
+              		if ($tempty=="s_no") echo "selected=selected" ; ?>>S No</option>
+                <option value="id_no"
+                	<?php ob_start();
+              			if ($tempty=="id_no") echo "selected=selected" ; ?>>Roll/ID</option>
+                <option value="name"
+                <?php  ob_start();
+              		if ($tempty=="name") echo "selected=selected" ; ?>>Name</option>
+				
+			</select>
+        </div>
+        <br>
+
+		<div class="field" id="per" >            
+			<label>Minimum percentage</label>
+			<input type="text" name="perc" value="" id="perc"/>           
+        </div>
+		
+		
+        <div class="field">
+            <br>
+            <input type="checkbox" name="viewlist" value="sdfafs"  onclick="show1('hidden');"/>
+           View For Specific student
+        </div>
+        <div class="field" id="hidden" >
+            <br>
+			<label></label><?php
+				ob_start();
+				
+				//the file where all functions reside
+				include 'functions.php';
+	
+				//database connect	
+				$con = db_connect();
+	
+				$c=$_GET['id'];
+				$query = "  SELECT reg.name AS n , reg.id_no AS i
+							FROM registered reg , enrolled_details ed  
+							WHERE ed.course_id='$c' AND reg.id_no=ed.id_no 
+						";
+				$result = mysqli_query($con, $query) or die("Error: " . mysqli_error($con));
+				echo "<select name=\"id\">";
+				echo "<option></option>";
+				while ($row = mysqli_fetch_array($result))
+				{
+					echo "<option value=".$row['i'].">".$row['n']." - ".$row['i']."</option>";
+				}
+				echo "</select><br>";
+			?></div>      
+		
+		<br>
+        <div class="field">
+			<label></label>
+            <input type="submit" value="Show" name="save" class="Submit"/>
+			<input type="submit" value="Export" name="export" class="Submit"/>
+        </div>
+    </fieldset>
+</form>
+</div>
+</div>
+<br>
+<br>
+<br>
+<br><?php
+ob_start();
+//set $_SESSION['Export'] = "Yes" for exporting else set it to "No"
+//$_SESSION['Export'] is used in report , export etc function in functions.php
+
+if (array_key_exists('save', $_POST)) 
+{	ob_start();
+	//the file where all functions reside
+    //include 'functions.php';
+	
+	//database connect	
+    $con = db_connect();
+	
+	//set default to no
+	//yes if have to export
+	$_SESSION['Export'] = "No";
+	
+	//attributes
+    $from 	= $_POST["from"];
+    $till 	= $_POST["till"];
+    $c_id 	= $_GET["id"];
+    $type 	= $_POST["type"];
+    $rollno = $_POST["id"];
+
+    //check for date boundries
+    $query =    "
+                SELECT starting_date , finishing_date
+                FROM course_details
+                WHERE course_id='$c_id'
+                ";
+    $result = mysql_query($query) or die(mysql_errno());
+    $row    = mysql_fetch_array($result);
+    
+	//source for all date conversion in php
+    // http://in3.php.net/manual/en/datetime.diff.php
+    
+    $dt1 = new DateTime($from);
+    $date_from = $dt1->format('Y-m-d'); 	//date
+    
+    $dt = new DateTime($till);
+    $date_till = $dt->format('Y-m-d'); 		//date
+        
+    $today = date("Y-m-d");					//date
+	
+    if (($date_from > $row['finishing_date']) or ($date_till < $row['starting_date']) )
+    {
+        echo "This course was for duration : ".$row['starting_date']." - ".$row['finishing_date'] ;
+        echo "<br>Entered duration was out  of this scope.";
+    }
+    else if ($date_from > $date_till)
+    {
+        echo "Inconsistent entries in time window";
+    }
+    else if ($date_from > $today)
+    {
+        echo "<br> Data available from ".$row['starting_date'] ." till ".$today."<br><br>";
+    }    
+    else  
+    {
+    
+        if ($date_from < $row['starting_date'] )
+        {
+            $from = $row['starting_date'];
+            
+        }
+        if ($date_till > $row['finishing_date'] )
+        {
+            $till = $row['finishing_date'];
+        }
+        
+        $dt = new DateTime($from);
+		$new_from = $dt->format('Y-m-d'); //date
+		$dt = new DateTime($till);
+		$new_till = $dt->format('Y-m-d'); //date
+		
+		if ( $today < $new_from )
+		{
+			echo "Report ready for dates till ".$today;
+		}
+		else if ($today > $new_from  && $today < $new_till)
+		{
+			$till = $today."";
+		}
+				if (mysqli_connect_errno()) 
+				{
+					echo "Failed to connect to MySQL: " . mysqli_connect_error();
+				} 
+				else 
+				{
+					//if checkbox is selected
+					if(array_key_exists('viewlist', $_POST))
+					{
+						//if the id of an individual person is entered
+						if ($_POST['id'] != "")
+						{
+							//USER VIEW
+							
+							
+							//checking if that student is enrolled for that class or not
+							$query 	= "SELECT id_no , course_id FROM enrolled_details WHERE id_no='$rollno' AND course_id='$c_id'	";  
+							$result = mysqli_query($con,$query) or die("Error: ".mysqli_error($con));
+							$row = mysqli_fetch_array($result);
+							if ($row['id_no'] == "")
+							{
+								echo "Sorry, this user is not registered for this course". $rollno;
+							}
+							else
+							{
+								
+								
+								echo "For course " . $c_id . "<br><br>";
+							
+								//initialize holidays in holid array
+								$holid = array();
+								$holid = initialize_holid($holid, $from, $till, $con);
+								
+								//total class, extra class, cancelled class counts
+								class_details($con,$c_id,$from,$till , $holid);
+								
+								//printing name
+								$query 	= "	SELECT name FROM registered WHERE id_no='$rollno' ";  
+								$result = mysqli_query($con,$query) or die("Error: ".mysqli_error($con));
+								$row = mysqli_fetch_array($result);
+								$comp_name=$row['name'];
+								echo "<b>For user ".$row['name']."</b> ( ".$rollno." ) "."<br><br>";
+								//get the schedule for this course for entire week
+								$schedule = array();
+								$schedule = get_schedule($schedule, $c_id, $con);
+																
+								$chart = array();	//main chart
+								$chart1= array();	//multiple slots record	 
+								$chart2= array();	//multiple extra record
+					
+								//chart_initialize
+								$chart = initialize_chart($chart, $chart1, $schedule, $from, $till, $con , $c_id);
+								
+								if($type == "Compact")
+								{
+									$_SESSION['tab1']="<table border='2' cellpadding='6' cellspacing='2'><tr><th>Roll number</th><th>Name</th><th>#present days</th><th>#absent days</th></tr>";
+								}				
+								
+								//generating and printing the report for this particular student
+								report($con,$rollno,$comp_name,$c_id,$from,$till,$type , $schedule , $holid , $chart,"0");
+								
+								if($type=="Compact")
+								{
+									echo "compact<br>";
+									$_SESSION['tab1'].="</table>";
+									echo $_SESSION['tab1'];
+									echo "<br><br>";
+								}
+							}
+						}
+						else
+						{
+							echo "Please select userId for generating report for an individual";
+						}
+					}				
+					else
+					{
+						//CLASS VIEW
+						echo "For course " . $c_id . "<br><br>";
+						
+						//initialize holidays in holid array
+						$holid = array();
+						$holid = initialize_holid($holid, $from, $till, $con);
+						
+						//total class, extra class, cancelled class
+						class_details($con, $c_id, $from, $till,$holid);
+
+						$sb=$_POST['sort_by'];
+						
+						$query = "  SELECT reg.name , reg.id_no , ed.s_no
+									FROM registered reg , enrolled_details ed  
+									WHERE ed.course_id='$c_id' AND reg.id_no=ed.id_no order by $sb";
+						$result = mysqli_query($con, $query) or die("Error: " . mysqli_error($con));
+
+						// array contains names and rollnumber of students registered for the course
+						$stu_reg_list = array();
+						$stu_roll_list = array();
+						$stu_sno_list = array();				
+						while ($row = mysqli_fetch_array($result)) 
+						{
+							array_push($stu_reg_list, $row['name']);
+							array_push($stu_roll_list, $row['id_no']);
+							array_push($stu_sno_list, $row['s_no']);
+						}
+
+						//get the schedule for this course for entire week
+						$schedule = array();
+						$schedule = get_schedule($schedule, $c_id, $con);
+										
+						$chart = array();   //main chart
+						$chart1= array();	//multiple slots record	
+						$chart2= array();	//multiple class record
+					
+						//chart_initialize
+						$chart = initialize_chart($chart, $chart1, $schedule, $from, $till, $con , $c_id);
+						
+						if($type=="Compact")
+						{
+								$_SESSION['tab1']="<table border='2' cellpadding='6' cellspacing='2'>
+												<tr>
+												<th>Roll number</th>
+												<th>Name</th>
+												<th>#present days</th>
+												<th>#absent days</th>
+												<th>percentage attendance</th>
+												</tr>";
+						}
+						
+						$i = 0;
+						$stu_len = count($stu_reg_list);
+						while ($i < $stu_len) 
+						{
+							if($type!="Compact")
+							{
+								//printing name 
+								echo "<b><br> S No  : " . $stu_sno_list[$i] . "</b>";
+								echo "<b><br>For user " . $stu_reg_list[$i] . "</b>";
+							
+								//printing user's id
+								echo "	(" . $stu_roll_list[$i] . ")<br>";
+							}
+							
+							$rollno = $stu_roll_list[$i];
+							$comp_name = $stu_reg_list[$i];
+							$percentage = $_POST['perc'];
+							
+							//report for a particular student
+							report($con,$rollno,$comp_name,$c_id,$from,$till,$type , $schedule , $holid , $chart,$percentage);
+
+							$i = $i + 1;
+						}//while loop end
+						
+						if($type=="Compact")
+						{
+							$_SESSION['tab1'].="</table>";
+							echo $_SESSION['tab1'];
+							echo "<br><br>";
+						}
+					}//class view end
+				}//if database connected successfully
+		
+    }//date consistency check ends     
+}//if array exists part end
+
+
+if (array_key_exists('export', $_POST)) 
+{
+	ob_start();
+	//db connect	
+	$con = db_connect();
+		
+	$type = $_POST["type"];
+	
+	//export can be for PRESENT or ABSENT slots
+	$_SESSION['Export'] = "No";
+	if ($type == "Compact" || $type == "Complete")
+	{
+		echo "<li>Export facility is exclusively for 'Absent' and 'Present' category<br>";
+		
+	}
+	else
+	{
+		//gathering entered data
+		$from = $_POST["from"];
+		$till = $_POST["till"];
+		$c_id = $_GET["id"];
+		$type = $_POST["type"];
+		$percentage = $_POST['perc'];
+		
+		//for export option
+		$_SESSION['Export'] = "Yes";
+				
+		//check for date boundaries
+		$query =    "
+					SELECT starting_date , finishing_date
+					FROM course_details
+					WHERE course_id='$c_id'
+					";
+		$result = mysql_query($query) or die(mysql_errno());
+		$row    = mysql_fetch_array($result);
+		
+		// http://in3.php.net/manual/en/datetime.diff.php
+		
+		$dt1 = new DateTime($from);
+		$date_from = $dt1->format('Y-m-d'); //date
+		
+		$dt = new DateTime($till);
+		$date_till = $dt->format('Y-m-d'); //date
+			
+		$today = date("Y-m-d");
+		
+		if (($date_from > $row['finishing_date']) or ($date_till < $row['starting_date']) )
+		{
+			echo "This course was for duration : ".$row['starting_date']." - ".$row['finishing_date'] ;
+			echo "<br> Entered duration was out  of this scope.";
+		}
+		else if ($date_from > $date_till)
+		{
+			echo "Inconsistent entries in time window";
+		}
+		else if ($date_from > $today)
+		{
+			echo "<br> Data available from ".$row['starting_date'] ." till ".$today."<br><br>";
+		}    
+		else  
+		{
+		
+			if ($date_from < $row['starting_date'] )
+			{
+				$from = $row['starting_date'];
+			}
+			if ($date_till > $row['finishing_date'] )
+			{
+				$till = $row['finishing_date'];
+			}
+			
+			$dt = new DateTime($from);
+			$new_from = $dt->format('Y-m-d'); //date
+			$dt = new DateTime($till);
+			$new_till = $dt->format('Y-m-d'); //date
+			
+			if ( $today < $new_from )
+			{
+				echo "Report ready for dates till ".$today;
+			}
+			else if ($today > $new_from  && $today < $new_till)
+			{
+				$till = $today."";
+			}
+			
+				//database connectivity
+				if (mysqli_connect_errno()) 
+				{
+					echo "Failed to connect to MySQL: " . mysqli_connect_error();
+				} 
+				else 
+				{				
+					//this array for generating the .csv file
+					$_SESSION['list'] = array();
+					
+					//maintaining count of each row in csv
+					$_SESSION['$entryCount'] = 0;
+					
+					//header or columns
+					if ($type == "Present")
+					{
+						$_SESSION['list'][$_SESSION['$entryCount']]=array("unique_id"  , "name", "rollnumber", "Present_slots","Present_count");
+						$_SESSION['$entryCount'] = $_SESSION['$entryCount'] + 1 ;
+					}
+					else
+					{
+						$_SESSION['list'][$_SESSION['$entryCount']]=array("unique_id".','  , "name".',', "rollnumber".',', "Absent_slots".',',"Absent_count");
+						$_SESSION['$entryCount'] = $_SESSION['$entryCount'] + 1 ;
+					}
+						
+					//grabbing name,rollno,uniqui_id associated with all enrolled students
+					$query = "  SELECT reg.name , reg.id_no , ed.s_no 
+								FROM registered reg , enrolled_details ed  
+								WHERE ed.course_id='$c_id' AND reg.id_no=ed.id_no ";
+					$result = mysqli_query($con, $query) or die("Error: " . mysqli_error($con));
+
+					$stu_reg_list = array();	//name
+					$stu_roll_list = array();	//rollno
+					$stu_uni_list = array();	//uni_id
+					
+					//all three arrays populated
+					while ($row = mysqli_fetch_array($result)) 
+					{
+						array_push($stu_reg_list, $row['name']);
+						array_push($stu_roll_list, $row['id_no']);
+						array_push($stu_uni_list, $row['s_no']);
+						//echo $stu_uni_list." ";
+					}
+					
+					//get the schedule for this course for entire week
+					$schedule = array();
+					$schedule = get_schedule($schedule, $c_id, $con);
+					
+					//initialize holidays in holid array
+					$holid = array();
+					$holid = initialize_holid($holid, $from, $till, $con);
+					
+					$chart = array();	//main chart    
+					$chart1= array();	//multiple slots record
+					$chart2= array();	//multiple extra classes record
+
+					//chart_initialize
+					$chart = initialize_chart($chart, $chart1, $schedule, $from, $till, $con , $c_id);
+					
+					$i = 0;
+					$stu_len = count($stu_reg_list);
+					
+					//loop through list of all enrolled students
+					while ($i < $stu_len) 
+					{		
+						$rollno = $stu_roll_list[$i];
+						$comp_name = $stu_reg_list[$i];
+						
+						//this uni_id will be used in export() function in functions.php file to export data to .csv
+						$_SESSION['uni_id'] = $stu_uni_list[$i];
+						
+						
+
+						//generate report through report then at end of report call EXPORT() to set $_SESSION variable
+						report($con,$rollno,$comp_name,$c_id,$from,$till, $type , $schedule , $holid , $chart,$percentage);
+						
+						$i = $i + 1;
+					}//while loop end
+									
+					//file name				
+					$file = $c_id."_".$from."_till_".$till.".csv";				
+					$fp = fopen($file, 'w');
+					
+					//write to .csv file
+					//all data has been saved as array in session_['list']
+					//echo count($_SESSION['list']);
+					foreach ($_SESSION['list'] as $fields) 
+					{
+						fputcsv($fp, $fields );
+						//echo "done<br>";
+					}
+
+					fclose($fp);
+					
+					$_SESSION['Export'] = "No";
+					
+					//go to download link
+					$link = 'Location: http:'.$file;
+					header( $link );	
+					
+					
+					//delete file after download
+					//unlink($file);
+					
+					}//successfully connected to database 
+			
+		}//date consistency
+	}//if type is present or absent
+}//if export is clicked
+ob_flush();?></div>s

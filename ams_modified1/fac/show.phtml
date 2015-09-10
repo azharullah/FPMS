@@ -1,0 +1,106 @@
+<?php
+if (isset($_POST['search']) ) {
+    $_GET['search'] = $_POST['search'];
+} 
+
+if(isset($_GET['order']))
+{
+    $order=$_GET['order'];
+}
+else
+{
+    $order="default";
+}
+
+
+$a = $_GET['id'];
+
+if(isset($_GET['to_remove']))
+{
+    $b=$_GET['to_remove'];
+require_once('dbconnect.php');
+//echo "delete from enrolled_details where course_id='$a' and id_no='$b'";
+$result = mysql_query("delete from enrolled_details where course_id='$a' and id_no='$b'") or die(mysql_error());
+ 
+}
+if(isset($_GET['de_enroll']))
+{
+	$s=$_GET['de_enroll'];
+	require_once('dbconnect.php');
+	$result = mysql_query("delete from enrolled_details where id_no like '$s' and course_id='$a'") or die(mysql_error());
+}
+
+
+?>
+
+<?php
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+$result = mysql_query("select * from course_details where course_id='$a'")
+or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_name'] ;
+
+    echo "<div><br><br><span class=navigation_link1>You are here: </sapn><a href=facindex.php?page=fachome class="."navigation_link> Home&nbsp&nbsp;&raquo; </a> <a href=facindex.php?page=course_sel&id=$a class="."navigation_link> $b&nbsp&nbsp;&raquo;</a> Show Enrolled students </div>";
+}
+?>
+
+<br><br>
+<form name="search_form" method="POST" action="#" style="padding:0px 250px;">
+    <input type="text" name="search" class="search_box" value="" placeholder="Search a pattern here"/>
+    <input type="submit" value=""  style="background:url(img/icons/search.png) no-repeat; background-size:20px 20px; cursor:pointer; border:none; width:20px; height:20px; "/>
+</form>
+
+
+
+<?php
+require_once('dbconnect.php');
+
+$s = $_GET['search'];
+if ($s == '') {
+    $s = '%';
+}
+
+//echo $s;
+?>
+<div class=course_options>
+<table border="0px" cellpadding="5">
+<tr>
+    <?php if($order=="id") {echo "<td><b><u>ID</u></b></td>";} else {?>
+    <td><b><a href="facindex.php?page=show&id=<?php echo $a;?>&order=id&search=<?php echo $s;?>" style="display: inline;color:Blue">ID</a>&#x25BC;</b></td><?php } ?>
+
+    <td><b><u>Name</u></b></td>
+    <?php if($order=="s_no") {echo "<td><b><u>S.NO</u></b></td>";} else {?>
+    <td><b><a href="facindex.php?page=show&id=<?php echo $a;?>&order=s_no&search=<?php echo $s;?>" style="display: inline;color:Blue">S.NO</a>&#x25BC;</b></td><?php } ?>
+    <td><b><u><?php echo "<a style=color:blue; align=right href=facindex.php?page=show&id=".$a."&de_enroll=" . $s . ">"?>Remove All</a> </u></b></td>
+    </tr>
+    
+<?php
+
+
+if($order=="id"){
+$result = mysql_query("select * from enrolled_details where id_no like '$s' and course_id='$a' order by id_no") or die(mysql_error());
+}
+
+if($order=="s_no"){
+$result = mysql_query("select * from enrolled_details where id_no like '$s' and course_id='$a' order by s_no") or die(mysql_error());
+}
+else
+{
+    $result = mysql_query("select * from enrolled_details where id_no like '$s' and course_id='$a'") or die(mysql_error());
+}
+
+while ($row = mysql_fetch_array($result)) {
+    $id_no = $row['id_no'];
+    $result1 = mysql_query("select name from registered where id_no='$id_no'") or die(mysql_error());
+    if ($row1 = mysql_fetch_array($result1)) {
+    echo "<tr><td> ".$row['id_no']."</td><td> ".$row1['name'] ."</td><td title='Double Click to edit' class='sr_no_edit' data-classid=".$a.">". $row['s_no']."</td><td><a href=facindex.php?page=show&id=".$a."&to_remove=" . $id_no ."&search=$s&order=$order>remove </a></td></tr>";
+
+
+        /*echo "<div class='enroll'>" . $id_no . "   " . $row1['name'] . "<a href=facindex.php?page=show&id=".$a."&to_remove=" . $id_no . "> Remove </a></div><br>\n";*/
+    } 
+}
+echo "</table></div>";
+
+
+?>

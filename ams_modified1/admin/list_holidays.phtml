@@ -1,0 +1,108 @@
+<?php
+	require_once 'dbconnect.php';
+	if(isset($_GET['action']) && $_GET['action']=="remove")
+	{
+		$date_from=$_GET['date_from'];
+		$date_to=$_GET['date_to'];
+		
+		$query = 
+                "   
+                DELETE IGNORE
+                FROM Holidays
+                where date between '$date_from' and '$date_to'
+                ";
+        mysql_query($query);
+	}
+?>
+
+
+<br><br>
+
+<div class=col-21>
+
+	<b>List Of Holidays </b>	
+	<br><br>	
+	<?php show_holidays(); ?>
+
+</div>
+
+<div class=col-22 style="margin-left:90px">
+	<br><br><br><br><br><br>
+	<b><u> Filter Result :</b><u><br><br>
+	<form name="Change" action="#" method="POST" >
+		<div class="field">
+            <label> Date From </label>
+            <input type="text" name="date_from" value="" class="datepicker"/>
+        </div>
+        <br> <br>
+        <div class="field">
+            <label> Date To</label>
+            <input type="text" name="date_to" value="" class="datepicker"/>
+        </div>
+        <br>
+        <div class="field">		
+				<br>
+				<input style="width:100px; float:center; margin-left:110px" type="submit" name="submit" class="Submit" value="Show" />				
+		</div>
+	</form>
+</div>
+
+
+
+<?php 
+	function show_holidays()
+	{
+		require_once 'dbconnect.php';
+		if(isset($_POST['submit']))
+		{
+
+			$date_from=$_POST['date_from'];
+			$date_to=$_POST['date_to'];
+
+			echo "From $date_from to $date_to ";
+			$query = 
+                "   
+                SELECT date,dayname(date) as day
+                FROM Holidays 
+                where date between '$date_from' and '$date_to'
+                ORDER BY  date DESC 
+                
+                ";
+
+		}
+		else
+		{
+			$date_from="00-00-00";
+			$date_to="00-00-00";
+			$query = 
+                "   
+                SELECT date,dayname(date) as day
+                FROM holidays 
+                ORDER BY  date DESC 
+                ";
+		}
+		
+		
+		$result = mysql_query($query);
+		
+		echo "<table>".
+				"<tr>".
+					"<th>Day</th>".
+					"<th>Date</th>".
+					"<th><a href=adminindex.php?page=list_holidays&action=remove&date_from=".$date_from."&date_to=".$date_to.">Remove All</th>".
+					
+				"</tr>";
+		while($row= mysql_fetch_array($result))
+		{
+			echo "<tr>".
+					"<td>".$row['day']."</td>".
+					"<td>".$row['date']."</td>".
+					"<td><a href=adminindex.php?page=list_holidays&action=remove&date_from=".$row['date']."&date_to=".$row['date'].">Remove</a></td>".
+					
+				"</tr>";
+		}
+		echo "</table>";
+
+	}
+
+?>

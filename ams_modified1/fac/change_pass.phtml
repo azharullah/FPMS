@@ -1,0 +1,76 @@
+
+ <div><br><br><span class=navigation_link1>You are here: </sapn><a href=facindex.php?page=fachome class=navigation_link> Home&nbsp&nbsp;&raquo; </a>  Change Password   </div>
+<br>
+ <div class="center">
+<div class="course_options">
+
+	<div class="errors">
+<?php 
+	require 'dbconnect.php';
+
+if(array_key_exists('save', $_POST))
+{
+	if ($_POST['password0']==="" )
+	{
+		echo "<li>Current password not entered.";
+	}
+	else if($_POST['password1']==="" )
+    {
+		echo "<li>Please enter new password";
+	}
+	else if( $_POST['password1']!=$_POST['password2'])
+	{
+		echo "<li>New passwords do not match";
+	}
+   else
+   {
+       $fac   = $_SESSION['id'];
+	   $query   =  "select password from faculty where id='$fac'";   
+       $result  = mysql_query($query) or die(mysql_error());
+	   $row    = mysql_fetch_array($result);
+	   
+	   if ($_POST['password0'] == $row['password'] )
+       {
+			$p=$_POST['password1'];
+            $query   =  "update faculty set password='$p' where id='$fac'";   
+			$result  = mysql_query($query) or die(mysql_error());
+			echo "<li>Password updated successfully";
+       }
+	   else
+	   {
+			echo "<li>Current password don't match";
+	   }
+   }
+
+
+} 
+        ?>
+    </div>
+<form name="Change" action="#" method="POST" >
+    <fieldset>	
+		
+		<div class="field">
+            <label>Current Password</label>
+            <input type="password" name="password0" value="" />
+        </div>
+        <br>
+		<br>
+		<div class="field">
+            <label>New Password</label>
+            <input type="password" name="password1" value="" />
+        </div>
+        <br>
+		<br>
+		<div class="field">
+            <label>Re-Type Password</label>
+            <input type="password" name="password2" value="" />
+        </div>
+        <br>
+		<br>
+		<div class="field">
+        <label><input type="submit" name="save" class="Submit" /></label>
+        <label><input type="reset" name="cancel" value="Reset" class="submit" /></label>
+        </div>
+    </fieldset>
+</form>
+</div></div>

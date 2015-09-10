@@ -1,0 +1,91 @@
+<?php echo "<div><br><br><span class=navigation_link1>You are here: </sapn><a href=adminindex.php?page=adminhome class="."navigation_link> Home&nbsp&nbsp;&raquo; </a><a href=adminindex.php?page=manage_course class="."navigation_link> Manage Courses&nbsp&nbsp;&raquo; </a> Delete Course   </div>"; ?>
+
+<br>
+
+<div class=course_options>
+<div class="errors">
+<?php require 'dbconnect.php';
+
+if(array_key_exists('save', $_POST))
+{
+	//get password for admin
+	$a=$_SESSION['id'];
+	$query = 	"
+                    SELECT password
+                    FROM  admin
+					WHERE id='$a'
+                    ;
+                ";
+    $result = mysql_query($query) or die(mysql_error());
+	$row = mysql_fetch_array($result);
+	
+	if ($row['password'] == $_POST['password'])
+	{
+		/*For Deleting the Entry from the database*/
+		$courseI=$_POST['CourseID'];
+		
+		//maintain the sequence of queries
+		$query1 = "delete from alter_class where course_id='$courseI'";
+		$query2 = "delete from enrolled_details where course_id='$courseI'";
+		$query3 = "delete from course_schedule where course_id='$courseI'";
+		$query4 = "delete from course_details where course_id='$courseI'"; 
+				
+		$result1 = mysql_query($query1) or die(mysql_error()); 
+		$result2 = mysql_query($query2) or die(mysql_error()); 
+		$result3 = mysql_query($query3) or die(mysql_error());
+		$result4 = mysql_query($query4) or die(mysql_error());
+		
+		echo "<li>".$courseI." : Course deleted successfully<br>";
+	}
+	else
+	{
+		echo "<li>Administrator password didn't match.";
+	}
+}
+if(array_key_exists('cancel', $_POST))
+{
+	
+} 
+?>
+</div>
+
+<!-- Form for deleting the course -->
+
+<div class="center">
+
+<form name="Change" action="#" method="POST" onsubmit="return pass(this)">
+    <fieldset>
+        <div class="field">
+             <label>Course name</label> 
+				<?php 
+                        $query = "
+                                    SELECT course_name , course_id
+                                    FROM  course_details
+                                    ;
+                                    ";
+                        $result = mysql_query($query) or die(mysql_error());
+                       
+                ?>
+             
+             <select name="CourseID" >
+                <?php
+                        
+                        while ($row = mysql_fetch_array($result))
+                        {
+                              echo "<option value=".$row['course_id']."> ". $row['course_name']."-". $row['course_id'] ."  </option>";
+                        }
+                 ?>
+             </select>
+        </div>
+		<br><br><br>
+		<div class="field">
+				<label>Password</label> 
+				<input type="password"  name="password" value=""> 
+        </div>     
+        <br><br><br>
+        <label><input type="submit" name="save" class="Submit" /></label>
+        <label><input type="reset" name="cancel" value="Reset" class="submit" /></label>
+        </div>
+    </fieldset>
+</form>
+</div>

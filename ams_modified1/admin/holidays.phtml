@@ -1,0 +1,125 @@
+ <?php echo "<div><br><br><span class=navigation_link1>You are here: </sapn><a href=adminindex.php?page=adminhome class="."navigation_link> Home&nbsp&nbsp;&raquo; </a> Manage Holidays  </div>"; ?>
+
+<br><br>
+
+<div class="center">
+	<div class="errors">
+    <?php 
+	//for database connect
+	require 'dbconnect.php';
+	echo "<br>";
+	
+	if(array_key_exists('submit', $_POST))
+	{		
+		
+		//if check box is selected and submit button hit i.e. SHOW HOLIDAYS for days window
+		if (!isset($_POST['viewlist']))
+		{		
+			$date = $_POST['date'];
+			
+			if ($date == "")
+			{
+				echo "<li> Please select date";
+			}
+			else
+			{
+				$query =  "insert  into holidays values ('$date')";
+				$result = mysql_query($query) ;
+				
+				if (!$result)
+				{
+					echo "<li>Entered date is already marked as holiday.";
+				}
+				else
+				{
+					echo "<li>".$date." marked as holiday";
+				}
+			}			
+		}	
+		else 
+		{
+			$from = $_POST['from'];
+			$till = $_POST['till'];
+		
+			if ($from == "" || $till == "")
+			{
+				echo "<li> Please fill the entries in <b>FROM</b> and <b>TILL</b> fields ";
+			}
+			else
+			{
+				$date = $from;
+				$already_entered_holidays = "";
+				while (strtotime($date) <= strtotime($till)) 
+				{
+					$dt = new DateTime($date);		
+					$d = $dt->format('Y-m-d');  //date
+					
+					$query =  "insert into holidays values ('$d')";
+					$result = mysql_query($query);
+					
+					if (!$result)
+					{
+						$already_entered_holidays  =  $already_entered_holidays."<br>".$date; 
+					}
+
+					$date = date("Y-m-d", strtotime("+1 day", strtotime($date)));
+				}
+				if ($already_entered_holidays != "")
+				{
+					echo "<li>Following dates were already marked as holidays :<br>".$already_entered_holidays;
+				}
+			}
+		}
+	}	
+		
+		
+	?>
+</div>
+
+
+
+<div class=course_options>
+<form name="Change" action="#" method="POST" >
+    <fieldset>
+	<div class="field">
+           <br>
+            <input style=" float:left;" type="checkbox" name="viewlist" value=""  id="view_hols"  onclick="show2('if_req','add_many_hol');"/>
+            &nbsp Add multiple
+        </div>
+        <br>
+
+        <div class="field">
+            <label> Date </label>
+            <input type="text" name="date" value="" class="datepicker"/>
+        </div>
+        
+		
+	
+		<div id="if_req">
+			<div class="field" id="st_dt">
+				<br>
+				<label>From</label>
+				<input type="text" name="from" class="datepicker" value="" />
+			</div>
+			<br>
+			<div class="field" id="fn_dt">
+				<label>To</label>
+				<input type="text" name="till" class="datepicker" value="" />
+			</div>
+			
+		</div>	
+		<div class="field">		
+				<br>
+				<input style="width:270px; float:left;" type="submit" name="submit" class="Submit" value="Add" />				
+		</div>
+		<br>
+		<br>
+		<br>
+		<a href="adminindex.php?page=list_holidays" style=" float:left; margin-left:80px" target="_blank"> Manage holidays list </a>
+    </fieldset>
+</form>
+
+
+
+
+</div></div>

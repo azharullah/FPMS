@@ -1,0 +1,87 @@
+<?php
+if(!isset($_SESSION['started']) ||  ($_SESSION['loginas'] != 'Faculty'))
+{
+    header('Location:index.php');
+
+}
+if(isset($_GET['logout']) && $_GET['logout']=1 )
+{
+    unset($_SESSION['started']);
+    header('Location:index.php');
+}
+?>
+
+<?php require 'dbconnect.php';
+$id = $_SESSION['id'];
+$query  =   "
+                SELECT name 
+                FROM registered
+                WHERE id_no = '$id'
+            ";
+$result =   mysql_query($query) or die (mysql_error());
+$row    = mysql_fetch_array($result);
+$name=$row['name'];
+?>
+
+<html>
+    <head>
+        <title>Attendance Management System</title>
+        <link type="text/css" href="css/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <link href="css/layout.css" rel="stylesheet" type="text/css" />
+
+       
+
+        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+
+        <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>
+		
+        <link href="css/timePicker.css" rel="stylesheet" type="text/css" />
+
+        <script type="text/javascript" src="js/jquery.timePicker.js"></script>
+		 <script type="text/javascript" src="js/javascript.js"></script>
+       
+
+    </head>
+    <body id="page">
+        
+        <div id="header">
+            <br> <br> <br><br><center>Attendance Management System</center>
+			
+        </div>
+        
+			<div id="content">
+			
+			<br>            
+			<div class="wrapper">
+                <div id="top-right" style="text-align:right; padding-right:100px"> Logged in as <?php echo $name?> </div>
+                <div class="col-1">
+                    
+                    <br><br>
+                    <div class="box">
+                        <a  href="facindex.php?page=fachome"> <img src="img/icons/home.png"  class="icons" >Home </a> 
+                        <br>
+                        <a id="all_courses" onclick="show_courses();"> <img src="img/icons/courses.png"  class="icons" >All courses </a>
+                        <div class="inner">
+                            <div id="course_canvas"></div>
+                        </div>
+                        <br>
+                        <a href="facindex.php?page=change_pass"><img src="img/icons/changepass.png"  class="icons1">Change password </a>
+                        <br>
+                        <a href="facindex.php?page=edit_profile"><img src="img/icons/edit_user.png"  class="icons" >Edit profile </a>
+                        <br>
+                        <a href="facindex.php?page=fachome&logout=1"> <img src="img/icons/logoff.png"  class="icons" >Logout </a><br><br>
+                    </div>
+                </div>
+
+
+                <div class="col-2">
+                    <?php
+                    require $template;
+                    ?>
+                </div>
+            </div>
+        </div>
+    </body>
+    <html>

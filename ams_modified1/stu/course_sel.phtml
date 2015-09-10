@@ -1,0 +1,14 @@
+<?php
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+echo "Course selected : ".$a."<br><br>";
+$result = mysql_query("select * from enrolled_details where id_no='$a'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_id'] ;
+
+    echo "<div>Selected Course : $b ($a) </div>";
+}
+?>
+
+<br><a href="stuindex.php?page=class_attend&id=<?php echo $_GET["id"]; ?>"> Show Class Attendance </a>

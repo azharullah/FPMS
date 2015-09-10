@@ -1,0 +1,422 @@
+<?php
+
+//submit button
+if (array_key_exists('AddOne', $_POST))
+{
+	//if radio button selected
+	if  ($_POST['what'] == "addOne")
+	{
+		$co = $_GET['id'];
+		$sts = $_POST['start_ts'];
+		$ens = $_POST['end_ts'];
+		$dates = $_POST['date1'];
+		
+		$start = strtotime($sts);
+		$finis = strtotime($ens);
+		
+		if($sts == ""  || $ens == "" || $dates == "")
+		{
+			echo "Please fill up the all the following required fields :<br>";
+			echo "<li>Date<li>Starting time <li>Finishing time<br><br>";
+		}
+		else if ($start > $finis)
+		{
+			echo "Time slot entered is not consistent";
+		}
+		else
+		{
+			//$day  = $_POST['day'];
+			$timestamp = strtotime($dates);
+
+			$day = date('l', $timestamp);
+			//var_dump($day);
+			require 'dbconnect.php';
+			//echo "INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','E',1)";
+			mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','E',1)")
+					or die(mysql_error());
+
+			echo "<p>Added information about extra class</p>";
+			unset($_POST['Add']);
+		}
+	}
+}
+
+//submit button
+if (array_key_exists('CancelOne', $_POST))	
+{
+	require 'dbconnect.php';
+		
+	//radio button
+	if  ($_POST['what'] == "canOne")
+	{		
+		$co = $_GET['id'];
+		$dates = $_POST['date2'];
+
+		if ( $_POST['date2'] == "" )
+		{
+			echo "Please enter date.";
+		}
+		else
+		{
+			$timestamp = strtotime($dates);
+
+			$day = date('l', $timestamp);
+			
+			$query =    "
+					SELECT time1_start,time1_end,time2_start,time2_end,time3_start,time3_end
+					FROM course_schedule
+					WHERE course_id='$co' AND day='$day'
+					;
+					";
+			$result = mysql_query($query) or die(mysql_errno());
+			$row    = mysql_fetch_array($result);
+			
+			
+			
+			if ($_POST['slot'] == "first")
+			{
+			$sts = $row['time1_start'];
+			$ens = $row['time1_end'];
+			mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','C',1)")
+					or die(mysql_error());
+			}
+			
+			if ($_POST['slot'] == "second")
+			{
+			$sts = $row['time2_start'];
+			$ens = $row['time2_end'];
+			mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','C',1)")
+					or die(mysql_error());
+			}		
+			
+			if ($_POST['slot'] == "third")
+			{
+			$sts = $row['time3_start'];
+			$ens = $row['time3_end'];
+			mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$dates','$day','$sts','$ens','','','C',1)")
+					or die(mysql_error());
+			}		
+			echo "<p>Slot dated $dates ( $sts - $ens ) marked as cancelled</p><br>";
+			unset($_POST['Cancel']);
+		}
+		
+		
+	}
+}
+
+//submit button
+if(array_key_exists('CancelMany', $_POST))
+{
+	include 'functions.php';
+	require 'dbconnect.php';
+		
+	$co = $_GET['id'];
+	$from = $_POST['from'];
+	$till = $_POST['till'];
+	
+	$dt  = new DateTime($from);
+    $date_from = $dt->format('Y-m-d'); //date
+    
+	$dt1 = new DateTime($till);
+    $date_till = $dt1->format('Y-m-d'); //date
+    	
+	//radio button
+	if  ($_POST['what'] == "canMny")
+	{	
+		if ($from == ""  ||  $till == "")
+		{
+			echo "Please fill both FROM DATE and TILL DATE fields";
+		}
+		else if ($date_from > $date_till)
+		{
+			echo "Entered date window is not consistent";
+		}
+		else
+		{
+			$date=$from;
+			echo "entered";
+			//get scheduled class list 
+			
+				//db connect	
+				$con = db_connect();
+				
+			
+			$schedule = array();
+			$schedule = get_schedule($schedule, $co, $con);
+			
+			//0 -   count   -   how many classes ?
+			//1 -   time1_start
+			//2 -   time1_end
+			//3 -   time2_start
+			//4 -   time2_end
+			//5 -   day
+			//6	-	time3_start
+			//7	-	time3_end
+			
+			while (strtotime($date) <= strtotime($till)) 
+			{
+				//echo "loop<br>";
+				$dt  = new DateTime($date);		
+				$d   = $dt->format('Y-m-d');  //date
+				$day = $dt->format('l');	
+		   
+				//cancel those classes
+				
+				if ( $schedule[$day][0] == 1 || $schedule[$day][0] == 2 || $schedule[$day][0] == 3)
+				{
+					$a=$schedule[$day][1];
+					$b=$schedule[$day][2];
+					
+					mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$d','$day','$a','$b','','','C',1)") 
+					or 
+					die(mysql_error());
+
+				}
+				if ( $schedule[$day][0] == 2 || $schedule[$day][0] == 3)
+				{
+					$a=$schedule[$day][3];
+					$b=$schedule[$day][4];
+					
+					mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$d','$day','$a','$b','','','C',1)") 
+					or 
+					die(mysql_error());
+
+				}
+				if ( $schedule[$day][0] == 3 )
+				{
+					$a=$schedule[$day][6];
+					$b=$schedule[$day][7];
+				
+					mysql_query("INSERT INTO alter_class VALUES ('$co' ,'$d','$day','$a','$b','','','C',1)") 
+					or 
+					die(mysql_error());
+
+				}
+				
+				$date = date("Y-m-d", strtotime("+1 day", strtotime($date)));
+			}
+		}
+	}
+}
+?>
+<?php
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+$result = mysql_query("select * from course_details where course_id='$a'")
+or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    $b = $row['course_name'] ;
+
+    echo "<div><br><br><span class=navigation_link1>You are here: </sapn><a href=facindex.php?page=fachome class="."navigation_link> Home&nbsp&nbsp;&raquo; </a> <a href=facindex.php?page=course_sel&id=$a class="."navigation_link> $b&nbsp&nbsp;&raquo;</a> Manage extra/cancelled classes   </div>";
+}
+?>
+<br><br>
+<div class="col-21">
+
+
+<form action=# method="post">
+	
+	<input type="radio" name="what" value="addOne" id="1" checked='checked' onclick="change('1','2','3');">Add extra class
+	&nbsp;&nbsp;
+	<input type="radio" name="what" value="canOne" id="2" onclick="change('1','2','3');">Cancel class
+	&nbsp;&nbsp;
+	<input type="radio" name="what" value="canMny" id="3" onclick="change('1','2','3');">Cancel multiple
+	<br><br><br>
+	
+	
+	<fieldset>		
+		<div id="ForAddOne">
+			<div class="field">
+				<label>Date :	</label> 
+				<input type="text" name="date1" class="datepicker">
+			</div>
+			<br>
+			<div class="field">
+				<label>Starting time</label>   
+				<input type="text" class="time1"  name="start_ts" >
+			</div>
+			<br>
+			<div class="field">
+				<label>Finishing time</label>
+				<input type="text" class="time1" name="end_ts" >
+			</div>	
+			<br>
+			<div class="field">
+				<label></label>
+				<input type="submit" value="  Add  " name="AddOne" id="add_but">
+			</div>
+		</div>
+		<div id="ForCanOne">
+			<div class="field">
+				<label>Date :	</label> 
+				<input type="text" name="date2" class="datepicker">
+			</div>
+			<br>
+			<div class="field">
+				<label>Slot</label>
+			
+					<select name="slot">
+						<option  value="first">Slot #1</option>
+						<option  value="second">Slot #2</option>
+						<option  value="third">Slot #3</option>
+					</select>
+								
+			</div>
+			<br>
+			<br>
+			<br>
+			<div class="field">
+				<label></label>
+				<input type="submit" value="  Cancel  " name="CancelOne">
+			</div>
+			
+		</div>
+		<div id="ForCanMny">
+			<div class="field" id="st_dt">
+				<label>From date</label>
+				<input type="text" name="from" class="datepicker" value="" />
+			</div>
+			<br>
+			<div class="field" id="fn_dt">
+				<label>Till date</label>
+				<input type="text" name="till" class="datepicker" value="" />
+			</div>
+			<br>
+			<div class="field">
+				<label></label>
+				<input type="submit" value="Cancel all slots " name="CancelMany">
+			</div>
+		</div>
+    </fieldset>
+</form>
+<br><a href="facindex.php?page=list_alter&id=<?php echo $_GET["id"]; ?>" target="_blank"> Manage extra/cancelled classes list </a>
+</div>
+<div class="col-22">
+    
+    <center><label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <u> Schedule for course <?php echo $_GET['id'];?></u> </label></center>
+	<br>
+<?php 
+require_once( 'dbconnect.php');
+$a = $_GET['id'];
+?>
+<table border="1">
+    <thead>
+        <tr>
+            <th rowspan="2" colspan="1">Day</th>
+            <th colspan="2">Slot #1</th>
+			<th colspan="2">Slot #2</th>
+			<th colspan="2">Slot #3</th>
+		</tr>
+		<tr>
+			<th>Start Time</th>
+            <th>End Time</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+			<th>Start Time</th>
+            <th>End Time</th>            
+		</tr>
+    </thead>
+    <tbody>
+        <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Monday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Monday</td>
+            <td><?php if ( $row['time1_start'] != "00:00:00" ) echo $row['time1_start']; ?></td>
+            <td><?php if ( $row['time1_end'] != "00:00:00" ) echo $row['time1_end']; ?></td>
+            <td><?php if ( $row['time2_start'] != "00:00:00" ) echo $row['time2_start']; ?></td>
+            <td><?php if ( $row['time2_end'] != "00:00:00" ) echo $row['time2_end']; ?></td>
+			<td><?php if ( $row['time3_start'] != "00:00:00" ) echo $row['time3_start']; ?></td>
+            <td><?php if ( $row['time3_end'] != "00:00:00" )echo $row['time3_end'];} ?></td>
+        </tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Tuesday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Tuesday</td>
+            <td><?php if ( $row['time1_start'] != "00:00:00" ) echo $row['time1_start']; ?></td>
+            <td><?php if ( $row['time1_end'] != "00:00:00" ) echo $row['time1_end']; ?></td>
+            <td><?php if ( $row['time2_start'] != "00:00:00" ) echo $row['time2_start']; ?></td>
+            <td><?php if ( $row['time2_end'] != "00:00:00" ) echo $row['time2_end']; ?></td>
+			<td><?php if ( $row['time3_start'] != "00:00:00" ) echo $row['time3_start']; ?></td>
+            <td><?php if ( $row['time3_end'] != "00:00:00" )echo $row['time3_end'];} ?></td>
+		</tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Wednesday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Wednesday</td>
+            <td><?php if ( $row['time1_start'] != "00:00:00" ) echo $row['time1_start']; ?></td>
+            <td><?php if ( $row['time1_end'] != "00:00:00" ) echo $row['time1_end']; ?></td>
+            <td><?php if ( $row['time2_start'] != "00:00:00" ) echo $row['time2_start']; ?></td>
+            <td><?php if ( $row['time2_end'] != "00:00:00" ) echo $row['time2_end']; ?></td>
+			<td><?php if ( $row['time3_start'] != "00:00:00" ) echo $row['time3_start']; ?></td>
+            <td><?php if ( $row['time3_end'] != "00:00:00" )echo $row['time3_end'];} ?></td>
+		</tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Thursday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Thursday</td>
+            <td><?php if ( $row['time1_start'] != "00:00:00" ) echo $row['time1_start']; ?></td>
+            <td><?php if ( $row['time1_end'] != "00:00:00" ) echo $row['time1_end']; ?></td>
+            <td><?php if ( $row['time2_start'] != "00:00:00" ) echo $row['time2_start']; ?></td>
+            <td><?php if ( $row['time2_end'] != "00:00:00" ) echo $row['time2_end']; ?></td>
+			<td><?php if ( $row['time3_start'] != "00:00:00" ) echo $row['time3_start']; ?></td>
+            <td><?php if ( $row['time3_end'] != "00:00:00" )echo $row['time3_end'];} ?></td>
+		</tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Friday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Friday</td>
+            <td><?php if ( $row['time1_start'] != "00:00:00" ) echo $row['time1_start']; ?></td>
+            <td><?php if ( $row['time1_end'] != "00:00:00" ) echo $row['time1_end']; ?></td>
+            <td><?php if ( $row['time2_start'] != "00:00:00" ) echo $row['time2_start']; ?></td>
+            <td><?php if ( $row['time2_end'] != "00:00:00" ) echo $row['time2_end']; ?></td>
+			<td><?php if ( $row['time3_start'] != "00:00:00" ) echo $row['time3_start']; ?></td>
+            <td><?php if ( $row['time3_end'] != "00:00:00" )echo $row['time3_end'];} ?></td>
+		</tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Saturday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Saturday</td>
+            <td><?php if ( $row['time1_start'] != "00:00:00" ) echo $row['time1_start']; ?></td>
+            <td><?php if ( $row['time1_end'] != "00:00:00" ) echo $row['time1_end']; ?></td>
+            <td><?php if ( $row['time2_start'] != "00:00:00" ) echo $row['time2_start']; ?></td>
+            <td><?php if ( $row['time2_end'] != "00:00:00" ) echo $row['time2_end']; ?></td>
+			<td><?php if ( $row['time3_start'] != "00:00:00" ) echo $row['time3_start']; ?></td>
+            <td><?php if ( $row['time3_end'] != "00:00:00" )echo $row['time3_end'];} ?></td>
+		</tr>
+         <tr>
+            <?php $result = mysql_query("select * from course_schedule where course_id='$a' and day='Sunday'")
+        or die(mysql_error());
+if ($row = mysql_fetch_array($result)) {
+    ?>
+            
+            <td>Sunday</td>
+            <td><?php if ( $row['time1_start'] != "00:00:00" ) echo $row['time1_start']; ?></td>
+            <td><?php if ( $row['time1_end'] != "00:00:00" ) echo $row['time1_end']; ?></td>
+            <td><?php if ( $row['time2_start'] != "00:00:00" ) echo $row['time2_start']; ?></td>
+            <td><?php if ( $row['time2_end'] != "00:00:00" ) echo $row['time2_end']; ?></td>
+			<td><?php if ( $row['time3_start'] != "00:00:00" ) echo $row['time3_start']; ?></td>
+            <td><?php if ( $row['time3_end'] != "00:00:00" )echo $row['time3_end'];} ?></td>
+		</tr>
+        
+    </tbody>
+</table>
+
+</div>

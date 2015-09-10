@@ -1,0 +1,68 @@
+<?php
+if(!isset($_SESSION['started']) ||  ($_SESSION['loginas'] != 'Student'))
+{
+    header('Location:index.php');
+}
+if(isset($_GET['logout']) && $_GET['logout']=1 )
+{
+    unset($_SESSION['started']);
+    header('Location:index.php');
+}
+?>
+
+<html>
+    <head>
+        <title>Attendance Management System</title>
+        <link type="text/css" href="css/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <link href="css/layout.css" rel="stylesheet" type="text/css" />
+
+        
+
+        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+
+        <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>
+
+        <link href="css/timePicker.css" rel="stylesheet" type="text/css" />
+
+        <script type="text/javascript" src="js/jquery.timePicker.js"></script>
+		<script type="text/javascript" src="js/javascript.js"></script>
+       
+
+    </head>
+    <body id="page">
+        <div class="tail-top-right"></div>
+        <div id="header">
+            <br> <br> <br><br><br><br><center>Attendance Management System</center>
+        </div>
+        
+        <div id="content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" onclick="history.back()" style="color:#4C7CBD;font-size:0.9em;font-weight:bold;padding:1;" 
+			value="          Go Back           ">
+			<br><br>
+            <div class="wrapper">
+                <div class="col-1">
+                    <div class="box">
+                        <a href="stuindex.php?page=stuhome"> Home </a> 
+                        <br>
+                        <a id="all_courses" onclick="show_opted_courses();">Opted Courses </a>
+                        <div class="inner">
+                            <div id="course_canvas1"></div>
+                        </div>
+                        <br>
+                        <a href="stuindex.php?page=stuhome&logout=1"> Logout </a>
+                    </div>
+                </div>
+
+
+                <div class="col-2">
+                    <?php
+                    require $template;
+                    ?>
+                </div>
+            </div>
+        </div>
+    </body>
+    <html>

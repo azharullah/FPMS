@@ -1,0 +1,22 @@
+to do -----------
+1. add validation for edit course page form
+2. ajax manage extra class
+3. ajax manage holidys 
+4. ajax manage #slots in alter class
+5. report in alter class at different places
+6. alter class remove redundant slots (done in trial db)
+
+
+
+
+
+----------------
+done for admin
+----------------
+1. add course form validation
+2. add third slot to database 
+3. show all extra classes
+4. show third slot in reports also
+5. admin password 
+6. display list of holidays
+7. headings to all admin pages

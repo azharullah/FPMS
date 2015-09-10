@@ -1,0 +1,104 @@
+<?php
+	require_once 'dbconnect.php';
+	if(isset($_GET['action']) && $_GET['action']=="remove")
+	{
+		$course_id=$_GET['id'];
+		$date=$_GET['date'];
+		$time1_start=$_GET['time1_start'];
+		$time1_end=$_GET['time1_end'];
+		$query = 
+                "   
+                DELETE IGNORE
+                FROM alter_class
+                WHERE course_id='$course_id' and date='$date' and time1_start='$time1_start' and time1_end='$time1_end'
+                ";
+        mysql_query($query);
+	}
+?>
+
+
+<br><br>
+<div class="col-21">
+	<div>
+		<b>List Of Extra Classes </b>
+
+		<br><br>
+		<?php show_extra($_GET['id']); ?>
+
+	</div>
+</div>
+
+<div class="col-22">
+	<div>
+		<b>List Of Canceled Classes </b>
+		<br><br>
+		<?php show_cancelled($_GET['id']); ?>
+	</div>
+</div>
+
+
+<?php 
+	function show_extra($course_id)
+	{
+		require_once 'dbconnect.php';
+		$query = 
+                "   
+                SELECT *
+                FROM alter_class
+                WHERE course_id = '$course_id' and type='E' order by date;
+                ";
+		$result = mysql_query($query);
+		
+		echo "<table>".
+				"<tr>".
+					"<th>Day</th>".
+					"<th>Date</th>".
+					"<th>Time_Start</th>".
+					"<th>Time_End</th>".
+					"<th>Remove</th>".
+				"</tr>";
+		while($row= mysql_fetch_array($result))
+		{
+			echo "<tr>".
+					"<td>".$row['day']."</td>".
+					"<td>".$row['date']."</td>".
+					"<td>".$row['time1_start']."</td>".
+					"<td>".$row['time1_end']."</td>".
+					"<td><a href=facindex.php?page=list_alter&id=CSAD&action=remove&date=".$row['date']."&time1_start=".$row['time1_start']."&time1_end=".$row['time1_end'].">Remove</a></td>".
+				"</tr>";
+		}
+		echo "</table>";
+
+	}
+
+	function show_cancelled($course_id)
+	{
+		require_once 'dbconnect.php';
+		$query = 
+                "   
+                SELECT *
+                FROM alter_class
+                WHERE course_id = '$course_id' and type='C' order by date;
+                ";
+		$result = mysql_query($query);
+		
+		echo "<table>".
+				"<tr>".
+					"<th>Day</th>".
+					"<th>Date</th>".
+					"<th>Time_Start</th>".
+					"<th>Time_End</th>".
+				"</tr>";
+		while($row= mysql_fetch_array($result))
+		{
+			echo "<tr>".
+					"<td>".$row['day']."</td>".
+					"<td>".$row['date']."</td>".
+					"<td>".$row['time1_start']."</td>".
+					"<td>".$row['time1_end']."</td>".
+				"</tr>";
+		}
+		echo "</table>";
+
+	}
+?>
